@@ -29,6 +29,7 @@ class App extends Component {
         <Popover
           // trigger="click"
           placement="right"
+          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
         >
           <button>This is another very very big button</button>
         </Popover>
@@ -37,6 +38,7 @@ class App extends Component {
         <Popover
           // trigger="click"
           placement="top"
+          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
         >
           <button>This is another very very big button</button>
         </Popover>
@@ -45,6 +47,7 @@ class App extends Component {
         <Popover
           trigger="click"
           placement="bottom"
+          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
         >
           <button>This is another very very big button</button>
         </Popover>

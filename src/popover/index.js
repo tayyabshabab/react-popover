@@ -1,56 +1,98 @@
+/* eslint no-restricted-globals: ["off", "screen"] */
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { withContentRect } from 'react-measure';
 import './index.css';
+
+const screenWidth = screen.width;
+const screenHeight = screen.height;
 
 class Popover extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sourceEl: {top: 0, left: 0, width: 0, height: 0},
-      popover: {show: false, top: 0, left: 0, width: 0, height: 0},
+      anchorEl: {top: null, left: null, width: null, height: null},
+      popover: {show: false, placement: props.placement, top: null, left: null, width: null, height: null},
+      arrow: {left: null, top: null},
     };
+    this.anchorRef = null;
+    this.popoverRef = null;
   }
 
-  componentWillReceiveProps(nextProps) {
-    try {
-      const { width, height } = nextProps.contentRect.offset;
-      const {top, left} = this.calculatePosition(width, height);
-      const popover = {...this.state.popover, top, left};
-      this.setState({ popover });
-    } catch (error) {
-      console.log(`Error: ${error}`);
-    }
-  }
+  // componentDidMount () {
+  //   try {
+  //     const { width, height } = this.popoverRef.getBoundingClientRect();
+  //     if (width && height) {
+  //       const {top, left} = this.calculatePosition(width, height);
+  //       const popover = {...this.state.popover, top, left, width, height};
+  //       console.log(popover);
+  //       this.setState({ popover });
+  //     }
+  //   } catch (error) {
+  //     console.log(`Error: ${error}`);
+  //   }
+  // }
 
-  calculatePosition = (width, height) => {
-    const {left: sourceLeft, top: sourceTop, width: sourceWidth, height: sourceHeight} = this.el.getBoundingClientRect();
-    let top = 0, left = 0;
-    switch (this.props.placement) {
+  // componentWillReceiveProps(nextProps) {
+  //   debugger;
+  //   // console.log(nextProps.measure());
+  //   try {
+  //     const { width, height } = this.popoverRef.getBoundingClientRect();
+  //     debugger;
+  //     if (width && height) {
+  //       const {top, left} = this.calculatePosition(width, height);
+  //       const popover = {...this.state.popover, top, left, width, height};
+  //       // console.log(popover);
+  //       this.setState({ popover });
+  //     }
+  //   } catch (error) {
+  //     console.log(`Error: ${error}`);
+  //   }
+  // }
+
+  calculatePosition = (placement = this.state.popover.placement) => {
+    const { width, height } = this.popoverRef.getBoundingClientRect();
+    const {left: anchorLeft, top: anchorTop, width: anchorWidth, height: anchorHeight} = this.anchorRef.getBoundingClientRect();
+    let top = 0, left = 0, arrowLeft = null, arrowTop = null;
+    console.log(placement)
+    switch (placement) {
       case 'top':
-        return {
-          top: sourceTop - height,
-          left: sourceLeft - (width / 2) + (sourceWidth/2),
-        };
+        top = anchorTop - height;
+        left = anchorLeft - (width / 2) + (anchorWidth/2);
+        break;
       case 'bottom':
-        return {
-          top: sourceTop + sourceHeight,
-          left: sourceLeft - (width / 2) + (sourceWidth/2),
-        };
+        top = anchorTop + anchorHeight;
+        left = anchorLeft - (width / 2) + (anchorWidth/2);
+        break;
       case 'left':
-        return {
-          top: sourceTop - (height / 2) + (sourceHeight / 2),
-          left: sourceLeft - width,
-        };
+        top = anchorTop - (height / 2) + (anchorHeight / 2);
+        left = anchorLeft - width;
+        break;
       case 'right':
-        return {
-          top: sourceTop - (height / 2) + (sourceHeight / 2),
-          left: sourceLeft + sourceWidth,
-        };
+        top = anchorTop - (height / 2) + (anchorHeight / 2);
+        left = anchorLeft + anchorWidth;
+        break;
       default:
-        return {top, left};
+        break;
     }
+    console.log(left, top);
+    console.log(left + width, screenWidth);
+
+    // Reverse placement if no space
+    if (left < 0 && placement === 'left')                       { this.calculatePosition('right'); return; }
+    if (left + width > screenWidth && placement === 'right')    { this.calculatePosition('left'); return; }
+    if (top < 0 && placement === 'top')                         { this.calculatePosition('bottom'); return; }
+    if (top + height > screenHeight && placement === 'bottom')  { this.calculatePosition('top'); return; }
+
+    // Don't let the popover exit the screen
+    if (top < 0)    {top = 0; arrowTop = anchorTop + anchorHeight / 2; }
+    if (left < 0)   {left = 0; arrowLeft = anchorLeft + anchorWidth / 2; }
+
+
+    const popover = {...this.state.popover, placement, top, left, width, height};
+    console.log(popover);
+    const arrow = {...this.state.arrow, left: arrowLeft, top: arrowTop};
+    this.setState({ popover, arrow });
   };
 
   handleBackgroundClick = e => {
@@ -60,7 +102,7 @@ class Popover extends Component {
   };
 
   handleMouseEnter = e => {
-    this.props.trigger === 'hover' && this.setState({ popover: {...this.state.popover, show: true} });
+    this.props.trigger === 'hover' && this.setState({ popover: {...this.state.popover, show: true} }, this.calculatePosition);
   };
 
   handleMouseLeave = e => {
@@ -69,7 +111,13 @@ class Popover extends Component {
 
   handleClick = e => {
     e.preventDefault();
-    this.props.trigger === 'click' && this.setState({ popover: {...this.state.popover, show: true} });
+    this.props.trigger === 'click' && this.setState({ popover: {...this.state.popover, show: true} }, this.calculatePosition);
+  };
+
+  shouldDisplayPopover = (triggerMethod) => {
+    const {popover: {show, left, top}} = this.state;
+    const { trigger } = this.props;
+    return show && triggerMethod === trigger;
   };
 
   renderPopoverWithBackdrop = () => {
@@ -78,15 +126,20 @@ class Popover extends Component {
         {this.renderPopover()}
       </div>
     );
-  }
+  };
 
   renderPopover = () => {
-    const {popover: {top, left}} = this.state;
-    const {placement} = this.props;
+    const {popover: {show, placement, top, left}, arrow: {left: arrowLeft, top: arrowTop}} = this.state;
+    // console.log(this.state.popover);
 
     return (
-      <div ref={this.props.measureRef} className={classNames('popover', 'fade', 'in', placement)} role="tooltip" id="popover309809" style={{ top, left }}>
-        <div className="arrow"></div>
+      <div
+        ref={(element) => this.popoverRef = element}
+        className={classNames('popover', 'fade', 'in', placement, {hidden: !show})}
+        role="tooltip"
+        style={show ? {top, left} : {}}
+      >
+        <div className="arrow" style={{left: arrowLeft, top: arrowTop}}></div>
         <h3 className="popover-title">abc</h3>
         <div className="popover-content">Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</div>
       </div>
@@ -94,20 +147,17 @@ class Popover extends Component {
   };
 
   render() {
-    const {popover: {show}} = this.state;
-    const { trigger } = this.props;
-
     return (
       <div>
         {React.cloneElement(this.props.children, {
-          ref: (element) => this.el = element,
+          ref: (element) => this.anchorRef = element,
           onMouseEnter: this.handleMouseEnter,
           onMouseLeave: this.handleMouseLeave,
           onClick: this.handleClick,
         })}
 
-        {show && trigger === 'hover' && this.renderPopover()}
-        {show && trigger === 'click' && this.renderPopoverWithBackdrop()}
+        {this.shouldDisplayPopover('hover') && this.renderPopover()}
+        {this.shouldDisplayPopover('click') && this.renderPopoverWithBackdrop()}
       </div>
     );
   }
@@ -123,7 +173,7 @@ Popover.propTypes = {
   trigger: PropTypes.string,
   placement: PropTypes.string,
   title: PropTypes.string,
-  // content: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
 };
 
-export default withContentRect('offset')(Popover);
+export default Popover;
