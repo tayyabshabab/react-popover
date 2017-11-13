@@ -35,7 +35,7 @@ class Popover extends Component {
         };
       case 'bottom':
         return {
-          top: sourceTop + sourceHeight + 10,
+          top: sourceTop + sourceHeight,
           left: sourceLeft - (width / 2) + (sourceWidth/2),
         };
       case 'left':
@@ -119,9 +119,11 @@ Popover.defaultProps = {
 }
 
 Popover.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node,
   trigger: PropTypes.string,
   placement: PropTypes.string,
+  title: PropTypes.string,
+  // content: PropTypes.string.isRequired,
 };
 
 export default withContentRect('offset')(Popover);

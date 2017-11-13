@@ -19,14 +19,32 @@ class App extends Component {
         <Popover
           trigger="hover"
           placement="left"
+          title="Title"
+          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
         >
           <button>This is a very very big button</button>
         </Popover>
 
         <br /><br /><br />
         <Popover
-          trigger="click"
+          // trigger="click"
           placement="right"
+        >
+          <button>This is another very very big button</button>
+        </Popover>
+
+        <br /><br /><br />
+        <Popover
+          // trigger="click"
+          placement="top"
+        >
+          <button>This is another very very big button</button>
+        </Popover>
+
+        <br /><br /><br />
+        <Popover
+          trigger="click"
+          placement="bottom"
         >
           <button>This is another very very big button</button>
         </Popover>
