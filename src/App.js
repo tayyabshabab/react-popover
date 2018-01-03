@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import Popover from './popover/index';
+import Popover from './Popover/index';
 
 class App extends Component {
   render() {
@@ -17,39 +17,12 @@ class App extends Component {
         </p>
 
         <Popover
-          trigger="hover"
+          triggerOn="click"
           placement="left"
-          title="Title"
+          title="Lorem Ipsum!"
           content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
         >
-          <button>This is a very very big button</button>
-        </Popover>
-
-        <br /><br /><br />
-        <Popover
-          // trigger="click"
-          placement="right"
-          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
-        >
-          <button>This is another very very big button</button>
-        </Popover>
-
-        <br /><br /><br />
-        <Popover
-          // trigger="click"
-          placement="top"
-          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
-        >
-          <button>This is another very very big button</button>
-        </Popover>
-
-        <br /><br /><br />
-        <Popover
-          trigger="click"
-          placement="bottom"
-          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
-        >
-          <button>This is another very very big button</button>
+          <button>Lorem Ipsum!</button>
         </Popover>
       </div>
     );

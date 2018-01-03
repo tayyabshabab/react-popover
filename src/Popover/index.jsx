@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Portal from '../Portal';
-import './popover.scss';
+import './popover.css';
 
 class Popover extends Component {
   constructor(props) {
@@ -20,7 +20,7 @@ class Popover extends Component {
 
   closePopover = () => {
     this.props.closePortal();
-  }
+  };
 
   calculatePosition = (placement = this.state.popover.placement) => {
     if (!this.popoverRef) {
