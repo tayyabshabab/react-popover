@@ -158,7 +158,7 @@ const PopoverAnchor = (props) => {
   });
 
   return (
-    <Portal anchor={anchor} triggerOn={tooltip ? 'both' : triggerOn} onClose={onClose} closeOnOutsideClick>
+    <Portal anchor={anchor} triggerOn={tooltip ? 'both' : triggerOn} onClose={onClose} closeOnOutsideClick closeOnEsc>
       <Popover
         placement={placement}
         title={title}

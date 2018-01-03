@@ -17,8 +17,31 @@ class App extends Component {
         </p>
 
         <Popover
-          triggerOn="click"
           placement="left"
+          title="Lorem Ipsum!"
+          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
+        >
+          <button>Lorem Ipsum!</button>
+        </Popover>
+
+        <Popover
+          placement="top"
+          title="Lorem Ipsum!"
+          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
+        >
+          <button>Lorem Ipsum!</button>
+        </Popover>
+
+        <Popover
+          placement="bottom"
+          title="Lorem Ipsum!"
+          content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
+        >
+          <button>Lorem Ipsum!</button>
+        </Popover>
+
+        <Popover
+          placement="right"
           title="Lorem Ipsum!"
           content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
         >
